@@ -1,12 +1,50 @@
-
 let amigos = [];
 
+// helpers 
+function normalizaNombre(s) {
+  return (s || '').trim().replace(/\s+/g, ' ').toLocaleLowerCase('es-MX');
+}
+
+function limpiarResultado() {
+  const resultado = document.getElementById('resultado');
+  resultado.innerHTML = '';
+}
+
+// UI
+function renderLista() {
+  const lista = document.getElementById('listaAmigos');
+  lista.innerHTML = '';
+
+  for (let i = 0; i < amigos.length; i++) {
+    const li = document.createElement('li');
+    const icon = document.createElement('span');
+    icon.textContent = '♥ ';
+    icon.style.color = '#4d7affff'; 
+
+    const texto = document.createTextNode(amigos[i]);
+
+    li.appendChild(icon);
+    li.appendChild(texto);
+    lista.appendChild(li);
+  }
+}
+
+// acciones
 function agregarAmigo() {
   const input = document.getElementById('amigo');
   const nombre = (input.value || '').trim();
 
   if (!nombre) {
-    alert('Por favor, inserte un nombre. No puede estar vacío. ♥');
+    alert('Por favor, inserta un nombre. No puede estar vacío. ♥');
+    return;
+  }
+
+  //duplicados
+  const n = normalizaNombre(nombre);
+  const yaExiste = amigos.some(a => normalizaNombre(a) === n);
+  if (yaExiste) {
+    alert('Ese nombre ya está en la lista. 😉');
+    input.select();
     return;
   }
 
@@ -16,18 +54,6 @@ function agregarAmigo() {
 
   renderLista();
   limpiarResultado();
-}
-
-function renderLista() {
-  const lista = document.getElementById('listaAmigos');
-  lista.innerHTML = '';
-
-  for (let i = 0; i < amigos.length; i++) {
-    const li = document.createElement('li');
-    
-    li.textContent = `♥ ${amigos[i]}`; 
-    lista.appendChild(li);
-  }
 }
 
 function sortearAmigo() {
@@ -40,7 +66,7 @@ function sortearAmigo() {
   const elegido = amigos[indiceAleatorio];
 
   const resultado = document.getElementById('resultado');
-  resultado.innerHTML = ''; 
+  resultado.innerHTML = '';
 
   const li = document.createElement('li');
   li.classList.add('resultado-amigo');
@@ -48,11 +74,7 @@ function sortearAmigo() {
   resultado.appendChild(li);
 }
 
-function limpiarResultado() {
-  const resultado = document.getElementById('resultado');
-  resultado.innerHTML = '';
-}
-
+// Enter
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('amigo');
   input.addEventListener('keydown', (e) => {
